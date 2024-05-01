@@ -1,6 +1,6 @@
 import logging
 
-from kbox.config import load_config
+from hbox.config import load_config
 
 
 class CustomFormatter(logging.Formatter):

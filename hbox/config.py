@@ -4,10 +4,10 @@ from typing import Dict, Optional, List
 
 from pydantic import BaseModel, Field
 
-from kbox.utils import resolve_path
+from hbox.utils import resolve_path
 
 version = "v0.0.1"
-base_dir = resolve_path(os.getenv("KBOX_DIR", os.path.expanduser("~/.kbox")))
+base_dir = resolve_path(os.getenv("HBOX_DIR", os.path.expanduser("~/.hbox")))
 config_path = resolve_path(os.path.join(base_dir, "config.json"))
 versions_path = resolve_path(os.path.join(base_dir, "versions.json"))
 shims_path = resolve_path(os.path.join(base_dir, "shims"))

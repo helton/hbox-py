@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "kbox"
+name = "hbox"
 version = "0.1.0"
 description = ""
 authors = ["Helton Carlos de Souza <heltoncarlossouza@gmail.com>"]
@@ -11,7 +11,7 @@ python = "^3.12"
 pydantic = "^2.7.1"
 
 [tool.poetry.scripts]
-kbox = "kbox.main:run"
+hbox = "hbox.main:run"
 
 [build-system]
 requires = ["poetry-core"]

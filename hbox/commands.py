@@ -3,9 +3,9 @@ import platform
 import subprocess
 from typing import Optional
 
-import kbox.config as config
-from kbox.logger import get_logger
-from kbox.utils import execute_command, resolve_path
+import hbox.config as config
+from hbox.logger import get_logger
+from hbox.utils import execute_command, resolve_path
 
 log = get_logger(__name__)
 
@@ -15,7 +15,7 @@ def add_shim(name: str):
     if not os.path.exists(shims_file_path):
         with open(shims_file_path, 'w') as shim_file:
             shim_file.write('#!/bin/sh\n')
-            shim_file.write('kbox run ' + name + ' "$@"\n')
+            shim_file.write('hbox run ' + name + ' "$@"\n')
 
         # Set the permissions of the new shim script to be executable (0o755 gives rwx for user and rx for group/others)
         os.chmod(shims_file_path, 0o755)
@@ -149,11 +149,11 @@ def show_info():
     os_info = ' '.join(platform.uname())
     log.info(os_info)
 
-    log.info("\nKBOX VERSION:")
+    log.info("\nHBOX VERSION:")
     log.info(config.version)
 
-    log.info("\nKBOX ENVIRONMENT VARIABLES:")
-    log.info(f"KBOX_DIR={config.base_dir}")
+    log.info("\nHBOX ENVIRONMENT VARIABLES:")
+    log.info(f"HBOX_DIR={config.base_dir}")
 
 
 def show_version():

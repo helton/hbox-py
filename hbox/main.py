@@ -1,6 +1,6 @@
 import argparse
 
-from kbox.commands import show_info, show_version, add_package, run_package, set_package_version, \
+from hbox.commands import show_info, show_version, add_package, run_package, set_package_version, \
     list_packages, remove_package
 
 
@@ -10,7 +10,7 @@ def run():
 
     subparsers.add_parser("info", help="Print debug information.")
 
-    subparsers.add_parser("version", help="Show current kbox version.")
+    subparsers.add_parser("version", help="Show current hbox version.")
 
     parser_list = subparsers.add_parser("list", help="List all installed packages and their versions.")
     parser_list.add_argument("name", type=str, nargs='?', default=None, help="Show all versions for a given package.")
