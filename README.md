@@ -52,7 +52,6 @@ export PATH="$HBOX_DIR/shims":$PATH
 - Add auto update
 - Add option to keep containers instead of using `--rm`
   - maybe adding custom tags to them to identify them easily?
-- Get version from git tag
 - Add GitHub Actions to build and publish to PyPI
 - Double check if registered packages are available locally before using them
 - Add warn when a shim will conflict with an existing command

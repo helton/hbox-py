@@ -149,14 +149,14 @@ def show_info():
     log.info(os_info)
 
     log.info("\nHBOX VERSION:")
-    log.info(config.version)
+    log.info(config.get_library_version())
 
     log.info("\nHBOX ENVIRONMENT VARIABLES:")
     log.info(f"HBOX_DIR={config.base_dir}")
 
 
 def show_version():
-    log.info(config.version)
+    log.info(config.get_library_version())
 
 
 def print_package(package):

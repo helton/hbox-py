@@ -1,3 +1,4 @@
+import importlib.metadata
 import os
 import json
 from typing import Dict, Optional, List
@@ -6,8 +7,8 @@ from pydantic import BaseModel, Field
 
 from hbox.utils import resolve_path
 
-version = "v0.0.1"
-base_dir = resolve_path(os.getenv("HBOX_DIR", os.path.expanduser("~/.hbox")))
+lib_name = "hbox"
+base_dir = resolve_path(os.getenv("HBOX_DIR", os.path.expanduser(f"~/.{lib_name}")))
 config_path = resolve_path(os.path.join(base_dir, "config.json"))
 versions_path = resolve_path(os.path.join(base_dir, "versions.json"))
 shims_path = resolve_path(os.path.join(base_dir, "shims"))
@@ -70,3 +71,11 @@ def load_versions() -> Packages:
 def save_versions(data: Packages):
     with open(versions_path, "w") as f:
         f.write(data.model_dump_json(indent=2))
+
+
+def get_library_version() -> str:
+    try:
+        version = importlib.metadata.version(lib_name)
+        return version
+    except importlib.metadata.PackageNotFoundError:
+        return "<unknown>"
