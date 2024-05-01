@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "kbox"
+version = "0.1.0"
+description = ""
+authors = ["Helton Carlos de Souza <heltoncarlossouza@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic = "^2.7.1"
+
+[tool.poetry.scripts]
+kbox = "kbox.main:run"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
