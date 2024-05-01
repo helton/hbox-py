@@ -5,7 +5,7 @@ from hbox.commands import show_info, show_version, add_package, run_package, set
 
 
 def run():
-    parser = argparse.ArgumentParser(description="CLI tool to manage package versions via container images.")
+    parser = argparse.ArgumentParser(description="CLI tool that leverages container technology to manage packages.")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     subparsers.add_parser("info", help="Print debug information.")
