@@ -3,18 +3,19 @@
 A CLI to manage packages via containers.
 
 ```sh
-$ kbox
-usage: kbox [-h] {info,version,list,add,run,use} ...
+$ kbox 
+usage: kbox [-h] {info,version,list,add,remove,run,use} ...
 
 CLI tool to manage package versions via container images.
 
 positional arguments:
-  {info,version,list,add,run,use}
+  {info,version,list,add,remove,run,use}
                         Available commands
     info                Print debug information.
-    version             Show current version.
+    version             Show current kbox version.
     list                List all installed packages and their versions.
     add                 Add a specific version of a package
+    remove              Remove a package.
     run                 Run the package.
     use                 Set current version of a package.
 
@@ -55,10 +56,11 @@ export PATH="$KBOX_DIR/shims":$PATH
 - Add GitHub Actions to build and publish to PyPI
 - Double check if registered packages are available locally before using them
 - Add warn when a shim will conflict with an existing command
-- Add `kbox remove` command
 - Add `kbox config` to support all `config.json` options
 - [Experimental] Identify paths in `kbox run` to map them via container volumes automatically
 - Separate `packages.json` from `config.json`
   - Allow use to override `packages.json` retrieved from centralized index/repo
 - Add `kbox update` to update index
 - Add `kbox register` to register a package, even with custom image
+- Add option to remove images when removing packages
+- Allow to specify CLI name for a package (in cases a package has a name like `lambda/python`)

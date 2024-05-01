@@ -21,7 +21,13 @@ def add_shim(name: str):
         os.chmod(shims_file_path, 0o755)
 
 
-def get_container_image_url(name: str, version: str):
+def remove_shim(name: str):
+    shims_file_path = resolve_path(os.path.join(config.shims_path, name))
+    if os.path.exists(shims_file_path):
+        os.remove(shims_file_path)
+
+
+def get_container_image_url(name: str, version: str, set_as_default: bool):
     cfg = config.load_config()
     versions_cfg = config.load_versions()
     found = False
@@ -29,9 +35,12 @@ def get_container_image_url(name: str, version: str):
         if current_package.name == name:
             if version in current_package.versions:
                 log.info(f"'{name}' version {version} already exists.")
-                return
+                return None, versions_cfg
             else:
                 current_package.versions.append(version)
+                if set_as_default:
+                    log.info(f"'{name}' version {version} set as default.")
+                    current_package.current = version
                 found = True
             break
     if not found:
@@ -43,23 +52,48 @@ def get_container_image_url(name: str, version: str):
     else:
         image = name
 
-    config.save_versions(versions_cfg)
-
-    return f"{image}:{version}"
+    return f"{image}:{version}", versions_cfg
 
 
-def add_package(name, version="latest"):
-    image_url = get_container_image_url(name, version)
+def add_package(name, version: Optional[str] = "latest", set_as_default: Optional[bool] = False):
+    image_url, versions_cfg = get_container_image_url(name, version, set_as_default)
     if image_url:
         full_command = ["docker", "pull", image_url]
         log.debug(f"Running command: {' '.join(full_command)}")
-        try:
-            execute_command(full_command)
-        except subprocess.CalledProcessError as e:
-            log.error(f"Failed to add '{name}' version {version}.")
+        exit_code = execute_command(full_command)
+        if exit_code != 0:
+            log.error(f"Failed to add package '{name}' at version {version}.")
         else:
+            config.save_versions(versions_cfg)
             log.info(f"Added '{name}' version {version}.")
             add_shim(name)
+
+
+def remove_package(name: str, version: Optional[str] = None):
+    versions_cfg = config.load_versions()
+    for current_package in versions_cfg.packages:
+        if current_package.name == name:
+            if version:
+                if version in current_package.versions:
+                    # Check if version to be removed is the current one and if there are multiple versions
+                    if version == current_package.current and len(current_package.versions) > 1:
+                        log.error(
+                            f"Cannot remove the current active version '{version}' of '{name}'.")
+                        return
+                    current_package.versions.remove(version)
+                    log.info(f"Removed version '{version}' of '{name}'.")
+                else:
+                    log.error(f"Version '{version}' of '{name}' does not exist.")
+
+            if not version or not current_package.versions:
+                versions_cfg.packages.remove(current_package)
+                remove_shim(name)
+                log.info(f"Removed package '{name}'.")
+            break
+    else:
+        log.error(f"Package '{name}' does not exist.")
+
+    config.save_versions(versions_cfg)
 
 
 def run_package(name: str, command: list):
@@ -73,9 +107,6 @@ def run_package(name: str, command: list):
     if name in cfg.packages:
         package = cfg.packages[name]
         image = package.image
-        for current_package in versions_cfg.packages:
-            if current_package.name == name:
-                version = current_package.current
         for volume in package.volumes:
             source = resolve_path(volume.source)
             target = volume.target
@@ -87,11 +118,18 @@ def run_package(name: str, command: list):
     else:
         log.debug(f"No configuration found for package '{name}'. Using {name} as the image name.")
 
-    full_image_url = f"{image}:{version}"
-    full_command = ["docker", "run", "--rm", full_image_url] + volumes_command + command
+    for current_package in versions_cfg.packages:
+        if current_package.name == name:
+            version = current_package.current
 
+    full_image_url = f"{image}:{version}"
+
+    full_command = ["docker", "run", "--rm", full_image_url] + volumes_command + command
     log.debug(f"Running command: {' '.join(full_command)}")
-    execute_command(full_command)
+    try:
+        execute_command(full_command, can_be_interactive=True)
+    except subprocess.CalledProcessError as e:
+        log.debug(f"Failed to run command {' '.join(full_command)}")
 
 
 def set_package_version(name: str, version: str):
@@ -123,11 +161,12 @@ def show_version():
 
 
 def print_package(package):
+    log.info(f"- {package.name}:")
     sorted_versions = sorted(package.versions)
     for version in sorted_versions:
-        msg = f"- {package.name}@{version}"
+        msg = f"  - {version}"
         if version == package.current:
-            msg += " (current)"
+            msg += " ✔"
         log.info(msg)
 
 
