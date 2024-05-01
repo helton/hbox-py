@@ -13,6 +13,7 @@ log = get_logger(__name__)
 def add_shim(name: str):
     shims_file_path = resolve_path(os.path.join(config.shims_path, name))
     if not os.path.exists(shims_file_path):
+        os.makedirs(os.path.dirname(shims_file_path), exist_ok=True)
         with open(shims_file_path, 'w') as shim_file:
             shim_file.write('#!/bin/sh\n')
             shim_file.write('hbox run ' + name + ' "$@"\n')
@@ -59,9 +60,8 @@ def add_package(name, version: Optional[str] = "latest", set_as_default: Optiona
     image_url, versions_cfg = get_container_image_url(name, version, set_as_default)
     if image_url:
         full_command = ["docker", "pull", image_url]
-        log.debug(f"Running command: {' '.join(full_command)}")
         exit_code = execute_command(full_command)
-        if exit_code != 0:
+        if exit_code and exit_code != 0:
             log.error(f"Failed to add package '{name}' at version {version}.")
         else:
             config.save_versions(versions_cfg)
@@ -125,7 +125,6 @@ def run_package(name: str, command: list):
     full_image_url = f"{image}:{version}"
 
     full_command = ["docker", "run", "--rm", full_image_url] + volumes_command + command
-    log.debug(f"Running command: {' '.join(full_command)}")
     try:
         execute_command(full_command, can_be_interactive=True)
     except subprocess.CalledProcessError as e:

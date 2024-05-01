@@ -3,33 +3,47 @@ import platform
 import subprocess
 import sys
 import threading
+from typing import Optional
 
 
 def reader(pipe, func):
     for line in iter(pipe.readline, b''):
         func(line.decode())
-    pipe.close()
 
 
-def execute_command(command, can_be_interactive: bool = False):
+def execute_in_shell(command, can_be_interactive):
+    stdin_pipe = subprocess.PIPE if can_be_interactive else None
+    process = subprocess.Popen(' '.join(command), shell=True, stdin=stdin_pipe,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return process
+
+
+def execute_in_subprocess(command, can_be_interactive):
+    stdin_pipe = subprocess.PIPE if can_be_interactive else None
+    process = subprocess.Popen(command, stdin=stdin_pipe, stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE)
+    return process
+
+
+def execute_command(command, can_be_interactive: bool = False) -> Optional[int]:
+    command_execution_func = execute_in_shell if platform.system().lower() == "linux" else execute_in_subprocess
+    process = None
     stdin_data = None
+    return_code = -1
 
     if can_be_interactive:
         if not sys.stdin.isatty():
             stdin_data = sys.stdin.read()
-
         if stdin_data:
             command.insert(2, "-i")
-        else:
-            command.insert(2, "-it")
-            is_windows = platform.system().lower() == "windows"
-            is_git_bash = bool(os.getenv('MSYSTEM'))
-            if is_windows and is_git_bash:
-                command.insert(0, "winpty")
 
-    if not can_be_interactive or stdin_data:
-        process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if stdin_data:
+    try:
+        # TODO only if in debug
+        print(f"Running command: {' '.join(command)}")
+
+        process = command_execution_func(command, can_be_interactive)
+
+        if can_be_interactive and stdin_data:
             process.stdin.write(stdin_data.encode())
             process.stdin.close()
 
@@ -40,16 +54,18 @@ def execute_command(command, can_be_interactive: bool = False):
         out_thread.join()
         err_thread.join()
 
-        process.stdout.close()
-        process.stderr.close()
-    else:
-        process = subprocess.Popen(command, shell=True)
-
-    try:
         return_code = process.wait()
-    except KeyboardInterrupt as e:
-        return -1
-    else:
+    except (subprocess.SubprocessError, OSError) as e:
+        # TODO only if in debug
+        print(f"Error executing command: {e}")
+        return None
+    except KeyboardInterrupt:
+        # TODO only if in debug
+        print("Interrupted by user")
+        return None
+    finally:
+        if process and can_be_interactive and stdin_data:
+            process.stdin.close()
         return return_code
 
 

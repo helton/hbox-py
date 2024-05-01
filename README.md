@@ -64,3 +64,4 @@ export PATH="$HBOX_DIR/shims":$PATH
 - Add `hbox register` to register a package, even with custom image
 - Add option to remove images when removing packages
 - Allow to specify CLI name for a package (in cases a package has a name like `lambda/python`)
+- Add support to colors in `hbox run` output when possible (*nix only?)
