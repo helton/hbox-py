@@ -1,0 +1,24 @@
+name: Create PR from feature branch to develop
+
+on:
+  push:
+    branches-ignore:
+      - main
+  create:
+    branches:
+      - 'feature/*'
+
+jobs:
+  create_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Create PR
+        run: python .github/scripts/create_pr.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
