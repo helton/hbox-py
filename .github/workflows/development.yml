@@ -104,6 +104,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Python dependencies
+        run: pip install requests
+
       - name: Create PR
         run: python .github/scripts/create_pr.py main
         env:
