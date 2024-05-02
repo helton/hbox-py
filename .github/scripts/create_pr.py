@@ -10,6 +10,11 @@ def create_pull_request():
     branch_name = branch.split('/')[-1]
     repository_owner = os.environ['GITHUB_REPOSITORY_OWNER']
 
+    print(f"repo={repo}")
+    print(f"branch={branch}")
+    print(f"branch_name={branch_name}")
+    print(f"repository_owner={repository_owner}")
+
     headers = {
         'Authorization': f'token {token}',
         'Accept': 'application/vnd.github.v3+json'
