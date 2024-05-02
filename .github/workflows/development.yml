@@ -1,0 +1,64 @@
+name: Deploy (Development)
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-release-pypi:
+    runs-on: ubuntu-latest
+    environment: development
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Bump version, build and publish to Test PyPI
+        run: |
+          poetry config repositories.test-pypi https://test.pypi.org/legacy/
+          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
+          NEW_VERSION=$(poetry version patch | cut -d " " -f 6)
+          echo "New version: $NEW_VERSION"
+          poetry build
+          poetry publish -r test-pypi $PYPI_TOKEN
+
+      - name: Commit version bump
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add pyproject.toml
+          git commit -m "chore: bump version to $NEW_VERSION"
+          git push
+
+  open-pr-main:
+    needs: [build-and-release-pypi]
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Python dependencies
+        run: pip install requests
+
+      - name: Create PR
+        run: python .github/scripts/create_pr.py main
+        env:
+          GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
