@@ -34,6 +34,8 @@ jobs:
           poetry publish
 
   publish-release-github:
+    permissions:
+      contents: write
     needs: [build-and-release-pypi]
     runs-on: ubuntu-latest
     environment: production
