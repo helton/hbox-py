@@ -6,36 +6,11 @@ on:
       - main
 
 jobs:
-  bump-version:
+  build-and-release-pypi:
     runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.12'
-
-      - name: Install Bumpversion
-        run: pip install bumpversion
-
-      - name: Bump version
-        run: bumpversion minor pyproject.toml
-
-      - name: Commit version bump
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add pyproject.toml
-          git commit -m "Bump version"
-          git push
-
-  build:
-    needs: [bump-version]
-    runs-on: ubuntu-latest
-    environment: production
+    environment: development
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -53,14 +28,13 @@ jobs:
         run: poetry install
 
       - name: Build and publish to PyPI
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
           poetry build
           poetry publish
 
-  publish:
-    needs: [build]
+  publish-release-github:
+    needs: [build-and-release-pypi]
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -78,11 +52,6 @@ jobs:
       - name: Set up environment variables for release
         run: echo "RELEASE_VERSION=${{ steps.get_version.outputs.version }}" >> $GITHUB_ENV
 
-  release:
-    needs: [publish]
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
       - name: Create Release
         if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
         id: create_release

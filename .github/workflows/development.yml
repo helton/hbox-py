@@ -6,7 +6,7 @@ on:
       - develop
 
 jobs:
-  build:
+  build-and-release-pypi:
     runs-on: ubuntu-latest
     environment: development
     permissions:
@@ -28,16 +28,16 @@ jobs:
         run: poetry install
 
       - name: Bump version, build and publish to Test PyPI
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
           poetry config repositories.test-pypi https://test.pypi.org/legacy/
           poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
-          NEW_VERSION=$(poetry version patch | cut -d " " -f 2)
+          NEW_VERSION=$(poetry version patch | cut -d " " -f 6)
+          echo "New version: $NEW_VERSION"
           poetry build
           poetry publish -r test-pypi $PYPI_TOKEN
 
       - name: Commit version bump
-        if: success() && github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -47,63 +47,11 @@ jobs:
           git commit -m "chore: bump version to $NEW_VERSION"
           git push
 
-  publish:
-    needs: [build]
+  open-pr-main:
+    needs: [build-and-release-pypi]
     runs-on: ubuntu-latest
     environment: development
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.12'
-
-      - name: Get version from pyproject.toml
-        id: get_version
-        run: |
-          echo "::set-output name=version::$(poetry version -s)"
-
-      - name: Set up environment variables for release
-        run: echo "RELEASE_VERSION=${{ steps.get_version.outputs.version }}" >> $GITHUB_ENV
-
-  release:
-    needs: [publish]
-    runs-on: ubuntu-latest
-    environment: development
-    steps:
-      - name: Create Release
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/*.zip
-          asset_name: hbox-${{ github.ref }}.zip
-          asset_content_type: application/zip
-
-      - name: Update Release Description
-        if: github.ref == 'refs/heads/develop' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./dist/*.zip
-          body: |
-            ${{ github.event.pull_request.merged_by.login }} has merged this PR into ${{ github.ref }}. The release version is ${{ env.RELEASE_VERSION }}.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout code
         uses: actions/checkout@v2
 
