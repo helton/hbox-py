@@ -3,21 +3,12 @@ import requests
 import re
 
 
-def get_repository_owner():
-    repo_url = os.environ['GITHUB_REPOSITORY']
-    owner_match = re.match(r'.*/(.+)$', repo_url)
-    if owner_match:
-        return owner_match.group(1)
-    else:
-        raise ValueError("Unable to determine repository owner from the repository URL")
-
-
 def create_pull_request():
     token = os.environ['GITHUB_TOKEN']
     repo = os.environ['GITHUB_REPOSITORY']
     branch = os.environ['GITHUB_REF']
     branch_name = branch.split('/')[-1]
-    repository_owner = get_repository_owner()
+    repository_owner = os.environ['GITHUB_REPOSITORY_OWNER']
 
     headers = {
         'Authorization': f'token {token}',
