@@ -1,7 +1,7 @@
 name: Create PR from feature branch to develop
 
 on:
-  create:
+  push:
     branches:
       - 'feature/*'
 
