@@ -1,6 +1,6 @@
 # hbox
 
-[![CI](https://img.shields.io/github/actions/workflow/status/helton/hbox/production.yml?branch=main&logo=github&label=CI)](https://github.com/helton/hbox/actions?query=event%3Apush+branch%3Amain+workflow%3ACI)
+[![CI](https://img.shields.io/github/actions/workflow/status/helton/hbox/production.yml?branch=main&logo=github&label=CI)](https://github.com/helton/hbox/actions?query=event%3Apush+workflow%3A%22Deploy+%28Production%29%22)
 [![pypi](https://img.shields.io/pypi/v/hbox.svg)](https://pypi.python.org/pypi/hbox)
 [![versions](https://img.shields.io/pypi/pyversions/hbox.svg)](https://github.com/helton/hbox)
 [![license](https://img.shields.io/github/license/helton/hbox.svg)](https://github.com/helton/hbox/blob/main/LICENSE)
