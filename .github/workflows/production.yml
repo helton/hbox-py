@@ -6,7 +6,34 @@ on:
       - main
 
 jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Install Bumpversion
+        run: pip install bumpversion
+
+      - name: Bump version
+        run: bumpversion minor pyproject.toml
+
+      - name: Commit version bump
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add pyproject.toml
+          git commit -m "Bump version"
+          git push
+
   build:
+    needs: [bump-version]
     runs-on: ubuntu-latest
     environment: production
     steps:
