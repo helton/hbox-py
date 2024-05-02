@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hbox"
-version = "0.1.9"
+version = "0.1.10"
 description = "CLI tool that leverages container technology to manage packages."
 authors = ["Helton Carlos de Souza <heltoncarlossouza@gmail.com>"]
 license = "MIT"
