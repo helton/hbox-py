@@ -1,0 +1,97 @@
+name: Deploy (Production)
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Install dependencies
+        run: poetry install
+
+  build:
+    needs: [setup]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Build and publish to PyPI
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+          poetry build
+          poetry publish
+
+  publish:
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Get version from pyproject.toml
+        id: get_version
+        run: |
+          echo "::set-output name=version::$(poetry version -s)"
+
+      - name: Set up environment variables for release
+        run: echo "RELEASE_VERSION=${{ steps.get_version.outputs.version }}" >> $GITHUB_ENV
+
+  release:
+    needs: [publish]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Create Release
+        if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/*.zip
+          asset_name: hbox-${{ github.ref }}.zip
+          asset_content_type: application/zip
+
+      - name: Update Release Description
+        if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./dist/*.zip
+          body: |
+            ${{ github.event.pull_request.merged_by.login }} has merged this PR into ${{ github.ref }}. The release version is ${{ env.RELEASE_VERSION }}.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
