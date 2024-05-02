@@ -5,6 +5,10 @@ import sys
 import threading
 from typing import Optional
 
+from hbox.logger import get_logger
+
+log = get_logger(__name__)
+
 
 def reader(pipe, func):
     for line in iter(pipe.readline, b''):
@@ -38,8 +42,7 @@ def execute_command(command, can_be_interactive: bool = False) -> Optional[int]:
             command.insert(2, "-i")
 
     try:
-        # TODO only if in debug
-        print(f"Running command: {' '.join(command)}")
+        log.debug(f"Running command: {' '.join(command)}")
 
         process = command_execution_func(command, can_be_interactive)
 
@@ -56,12 +59,10 @@ def execute_command(command, can_be_interactive: bool = False) -> Optional[int]:
 
         return_code = process.wait()
     except (subprocess.SubprocessError, OSError) as e:
-        # TODO only if in debug
-        print(f"Error executing command: {e}")
+        log.debug(f"Error executing command: {e}")
         return None
     except KeyboardInterrupt:
-        # TODO only if in debug
-        print("Interrupted by user")
+        log.debug("Interrupted by user")
         return None
     finally:
         if process and can_be_interactive and stdin_data:

@@ -7,31 +7,28 @@ hbox is a Command Line Interface (CLI) that leverages container technology to ma
 hbox offers the following features:
 
 - **Container Isolation**: hbox uses containers to isolate packages, allowing multiple versions of a package to coexist without conflict.
-
 - **Robust Configuration Options**: hbox enables high customization through configuration files. You can define package aliases and setup automatic volume mounts via `config.json`.
-
 - **Support for Pipes**: hbox supports the use of pipes in `hbox run`, which allows you to chain commands efficiently.
-
 - **Convenient Shims**: hbox creates `shims` (alias shortcuts) for all installed packages, simplifying command entry from `hbox run <package alias> <commands>` to `<package alias> <commands>`.
 
 ## Commands
 
 ```sh
 $ hbox
-usage: hbox [-h] {info,version,list,add,remove,run,use} ...
+usage: hbox [-h] {info,version,list,add,install,remove,uninstall,run,use,set} ...
 
 CLI tool that leverages container technology to manage packages.
 
 positional arguments:
-  {info,version,list,add,remove,run,use}
+  {info,version,list,add,install,remove,uninstall,run,use,set}
                         Available commands
     info                Print debug information.
     version             Show current hbox version.
     list                List all installed packages and their versions.
-    add                 Add a specific version of a package
-    remove              Remove a package.
+    add (install)       Add a specific version of a package
+    remove (uninstall)  Remove a package.
     run                 Run the package.
-    use                 Set current version of a package.
+    use (set)           Set current version of a package.
 
 options:
   -h, --help            show this help message and exit

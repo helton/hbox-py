@@ -1,7 +1,5 @@
 import logging
 
-from hbox.config import load_config
-
 
 class CustomFormatter(logging.Formatter):
     def format(self, record):
@@ -13,11 +11,19 @@ class CustomFormatter(logging.Formatter):
 
 
 def get_logger(name: str):
+    global log_level
     logger = logging.getLogger(name)
-    cfg = load_config()
-    logger.setLevel(logging.DEBUG if cfg.debug else logging.INFO)
+    logger.setLevel(log_level)
     formatter = CustomFormatter()
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
     return logger
+
+
+def set_log_level(level):
+    global log_level
+    log_level = level
+
+
+log_level = logging.INFO
