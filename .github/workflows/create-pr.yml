@@ -17,6 +17,6 @@ jobs:
         run: pip install requests
 
       - name: Create PR
-        run: python .github/scripts/create_pr.py
+        run: python .github/scripts/create_pr.py develop
         env:
           GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}

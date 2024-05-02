@@ -1,6 +1,6 @@
 import os
+import sys
 import requests
-import re
 
 
 token = os.environ['GITHUB_TOKEN']
@@ -12,6 +12,7 @@ headers = {
     'Authorization': f'token {token}',
     'Accept': 'application/vnd.github.v3+json'
 }
+target_branch = sys.argv[1]
 
 
 def check_if_pull_request_exists():
@@ -30,9 +31,9 @@ def check_if_pull_request_exists():
 
 def create_pull_request():
     payload = {
-        'title': f'Pull request from {branch_name} to develop',
+        'title': f'Pull request from {branch_name} to {target_branch}',
         'head': f'{repository_owner}:{branch_name}',
-        'base': 'develop'
+        'base': target_branch
     }
 
     url = f'https://api.github.com/repos/{repo}/pulls'
