@@ -6,7 +6,7 @@ on:
       - develop
 
 jobs:
-  setup:
+  build:
     runs-on: ubuntu-latest
     environment: development
     steps:
@@ -25,11 +25,6 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-  build:
-    needs: [setup]
-    runs-on: ubuntu-latest
-    environment: development
-    steps:
       - name: Build and publish to Test PyPI
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
