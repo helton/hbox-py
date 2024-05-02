@@ -7,7 +7,7 @@ def create_pull_request():
     token = os.environ['GITHUB_TOKEN']
     repo = os.environ['GITHUB_REPOSITORY']
     branch = os.environ['GITHUB_REF']
-    branch_name = branch.split('/')[-1]
+    branch_name = branch.replace("refs/heads/", "")
     repository_owner = os.environ['GITHUB_REPOSITORY_OWNER']
 
     print(f"repo={repo}")
