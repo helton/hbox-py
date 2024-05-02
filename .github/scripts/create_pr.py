@@ -26,7 +26,7 @@ def create_pull_request():
 
     payload = {
         'title': f'Pull request from {branch_name} to develop',
-        'head': f'{repository_owner}:{branch_name}',  # Updated head parameter
+        'head': f'{repository_owner}:{branch_name}',
         'base': 'develop'
     }
 
@@ -37,8 +37,8 @@ def create_pull_request():
     if response.status_code == 201:
         print("Pull request created successfully!")
     else:
-        print("Failed to create pull request.")
-        print(response.text)
+        print(f"{response.status_code} - {response.text}")
+        raise Exception("Failed to create pull request")
 
 
 if __name__ == "__main__":
