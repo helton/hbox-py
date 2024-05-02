@@ -8,6 +8,9 @@ on:
     branches:
       - 'feature/*'
 
+env:
+  ENVIRONMENT: development
+
 jobs:
   create_pr:
     runs-on: ubuntu-latest
@@ -21,4 +24,4 @@ jobs:
       - name: Create PR
         run: python .github/scripts/create_pr.py
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
