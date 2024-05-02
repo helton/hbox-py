@@ -25,13 +25,23 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Build and publish to Test PyPI
+      - name: Bump version, build and publish to Test PyPI
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
           poetry config repositories.test-pypi https://test.pypi.org/legacy/
           poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
+          NEW_VERSION=$(poetry version patch | cut -d " " -f 2)
           poetry build
           poetry publish -r test-pypi $PYPI_TOKEN
+
+      - name: Commit version bump
+        if: success() && github.ref == 'refs/heads/develop' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add pyproject.toml
+          git commit -m "chore: bump version to $NEW_VERSION"
+          git push
 
   publish:
     needs: [build]
