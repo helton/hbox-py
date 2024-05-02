@@ -80,6 +80,6 @@ jobs:
         with:
           files: ./dist/*.zip
           body: |
-            ${{ github.event.pull_request.merged_by.login }} has merged this PR into ${{ github.ref }}. The release version is ${{ env.RELEASE_VERSION }}.
+            ${{ github.event.pull_request.merged_by.login }} has merged this PR into ${{ github.ref }}. The release version is v${{ steps.get_version.outputs.version }}.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
