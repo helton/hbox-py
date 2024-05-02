@@ -6,7 +6,7 @@ import requests
 token = os.environ['GITHUB_TOKEN']
 repo = os.environ['GITHUB_REPOSITORY']
 branch = os.environ['GITHUB_REF']
-branch_name = branch.replace("refs/heads/", "")
+source_branch = branch.replace("refs/heads/", "")
 repository_owner = os.environ['GITHUB_REPOSITORY_OWNER']
 headers = {
     'Authorization': f'token {token}',
@@ -22,7 +22,7 @@ def check_if_pull_request_exists():
     if response.status_code == 200:
         pull_requests = response.json()
         for pr in pull_requests:
-            if pr['head']['ref'] == branch_name:
+            if pr['head']['ref'] == source_branch:
                 return True
     else:
         print(f"{response.status_code} - {response.text}")
@@ -31,8 +31,8 @@ def check_if_pull_request_exists():
 
 def create_pull_request():
     payload = {
-        'title': f'Pull request from {branch_name} to {target_branch}',
-        'head': f'{repository_owner}:{branch_name}',
+        'title': f'Pull request from {source_branch} to {target_branch}',
+        'head': f'{repository_owner}:{source_branch}',
         'base': target_branch
     }
 
@@ -49,7 +49,7 @@ def create_pull_request():
 
 def run():
     if check_if_pull_request_exists():
-        print(f"There's already a pull request for the branch: {branch_name}. Skipping")
+        print(f"There's already a pull request from {source_branch} to {target_branch}. Skipping...")
     else:
         create_pull_request()
 

@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-release-pypi:
     runs-on: ubuntu-latest
-    environment: development
+    environment: production
     permissions:
       contents: write
     steps:

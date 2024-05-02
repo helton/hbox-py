@@ -31,8 +31,8 @@ jobs:
         run: |
           poetry config repositories.test-pypi https://test.pypi.org/legacy/
           poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
-          NEW_VERSION=$(poetry version patch | cut -d " " -f 6)
-          echo "New version: $NEW_VERSION"
+          echo "new_version=$(poetry version patch | cut -d " " -f 6)" >> $GITHUB_ENV
+          echo "New version: ${{ env.new_version }}"
           poetry build
           poetry publish -r test-pypi $PYPI_TOKEN
 
@@ -44,7 +44,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add pyproject.toml
-          git commit -m "chore: bump version to $NEW_VERSION"
+          git commit -m "chore: bump version to ${{ env.new_version }}"
           git push
 
   open-pr-main:
