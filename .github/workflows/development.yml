@@ -28,7 +28,7 @@ jobs:
       - name: Build and publish to Test PyPI
         if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
-          poetry config repositories.test-pypi https://test.pypi.org/legacy
+          poetry config repositories.test-pypi https://test.pypi.org/legacy/
           poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
           poetry build
           poetry publish -r test-pypi $PYPI_TOKEN
