@@ -34,6 +34,15 @@ options:
   -h, --help            show this help message and exit
 ```
 
+## Installation
+
+You can install hbox via `pip` or your preferred package manager.
+To install hbox via `pip`, run the following command:
+
+```sh
+pip install hbox
+```
+
 ## Setup
 
 ### Shims and Shell Configuration
