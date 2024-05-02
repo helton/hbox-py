@@ -82,14 +82,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/*.tar.gz
+          asset_path: ./dist/hbox-${{ steps.get_version.outputs.version }}.tar.gz
           asset_name: hbox-${{ steps.get_version.outputs.version }}.tar.gz
           asset_content_type: application/gzip
 
       - name: Update Release Description
         uses: softprops/action-gh-release@v1
         with:
-          files: ./dist/*.tar.gz
+          files: ./dist/hbox-${{ steps.get_version.outputs.version }}.tar.gz
           body: |
             ${{ github.event.pull_request.merged_by.login }} has merged this PR into ${{ github.ref }}. The release version is v${{ steps.get_version.outputs.version }}.
         env:
