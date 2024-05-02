@@ -4,16 +4,15 @@ on:
   push:
     branches-ignore:
       - main
+      - develop
   create:
     branches:
       - 'feature/*'
 
-env:
-  ENVIRONMENT: development
-
 jobs:
   create_pr:
     runs-on: ubuntu-latest
+    environment: development
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
