@@ -31,12 +31,13 @@ jobs:
         run: poetry install
 
       - name: Python Semantic Release
+        id: semantic_release
         uses: python-semantic-release/python-semantic-release@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Test PyPI
-        if: success()
+        if: steps.semantic_release.outputs.released == 'true'
         run: |
           poetry config repositories.test-pypi https://test.pypi.org/legacy/
           poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
