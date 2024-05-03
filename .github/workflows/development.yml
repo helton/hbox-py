@@ -30,18 +30,17 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-#      - name: Python Semantic Release
-#        uses: python-semantic-release/python-semantic-release@master
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Python Semantic Release
+        uses: python-semantic-release/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Bump version, build and publish to Test PyPI
-#        run: |
-#          poetry config repositories.test-pypi https://test.pypi.org/legacy/
-#          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
-#          poetry build
-#          poetry publish -r test-pypi $PYPI_TOKEN
-#
+      - name: Publish to Test PyPI
+        run: |
+          poetry config repositories.test-pypi https://test.pypi.org/legacy/
+          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
+          poetry publish -r test-pypi $PYPI_TOKEN
+
 #      - name: Commit version bump
 #        if: success()
 #        env:
