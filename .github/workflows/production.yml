@@ -40,7 +40,7 @@ jobs:
         if: success() && steps.semantic_release.outputs.released == 'true'
         run: |
           poetry config repositories.test-pypi https://test.pypi.org/legacy/
-          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
+          poetry config pypi-token.test-pypi ${{ secrets.TEST_PYPI_TOKEN }}
           poetry publish -r test-pypi $PYPI_TOKEN
 
       - name: Publish to PyPI
