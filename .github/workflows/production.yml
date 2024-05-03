@@ -13,11 +13,8 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Build
-        uses: ./.github/workflows/build.yml
+        uses: ./.github/actions/install_build
         with:
           name: "Release version"
           environment: production
@@ -52,11 +49,8 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Build
-        uses: ./.github/workflows/build.yml
+        uses: ./.github/actions/install_build
         with:
           name: "Publish to test.pypi.org"
           environment: production
@@ -69,18 +63,15 @@ jobs:
           poetry publish -r test-pypi $PYPI_TOKEN
 
   publish-to-pypi:
-    needs: build-and-release
+    needs: publish-to-test-pypi
     runs-on: ubuntu-latest
     environment: production
     permissions:
       contents: write
       id-token: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Build
-        uses: ./.github/workflows/build.yml
+        uses: ./.github/actions/install_build
         with:
           name: "Publish to pypi.org"
           environment: production
@@ -92,7 +83,7 @@ jobs:
           poetry publish
 
   merge-back-to-develop:
-    needs: [publish-to-test-pypi, publish-to-pypi]
+    needs: publish-to-pypi
     runs-on: ubuntu-latest
     environment: production
     permissions:
