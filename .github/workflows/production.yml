@@ -36,13 +36,18 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get version from pyproject.toml
+        id: get_version
+        run: |
+          echo "::set-output name=version::$(poetry version -s)"
+
       - name: Upload release assets
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.semantic_release.outputs.version }}
+          tag_name: v${{ steps.get_version.outputs.version }}
           files: |
-            ./dist/hbox-${{ steps.semantic_release.outputs.version }}.tar.gz
-            ./dist/hbox-${{ steps.semantic_release.outputs.version }}-py3-none-any.whl
+            ./dist/hbox-${{ steps.get_version.outputs.version }}.tar.gz
+            ./dist/hbox-${{ steps.get_version.outputs.version }}-py3-none-any.whl
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
