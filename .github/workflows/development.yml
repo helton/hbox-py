@@ -9,27 +9,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: development
-    permissions:
-      id-token: write
-      contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Poetry
-        run: pipx install poetry
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'poetry'
-
-      - name: Install dependencies
-        run: poetry install
-
       - name: Build
-        run: poetry build
+        uses: ./.github/workflows/build.yml
+        with:
+          name: "Validate develop"
+          environment: development
 
   open-pr-main:
     needs: [build]
