@@ -10,10 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     permissions:
+      id-token: write
       contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Poetry
         run: pipx install poetry
@@ -27,25 +30,28 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Bump version, build and publish to Test PyPI
-        run: |
-          poetry config repositories.test-pypi https://test.pypi.org/legacy/
-          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
-          echo "new_version=$(poetry version patch | cut -d " " -f 6)" >> $GITHUB_ENV
-          echo "New version: ${{ env.new_version }}"
-          poetry build
-          poetry publish -r test-pypi $PYPI_TOKEN
+      - name: Python Semantic Release
+        uses: python-semantic-release/python-semantic-release@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Commit version bump
-        if: success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add pyproject.toml
-          git commit -m "chore: bump version to ${{ env.new_version }}"
-          git push
+#      - name: Bump version, build and publish to Test PyPI
+#        run: |
+#          poetry config repositories.test-pypi https://test.pypi.org/legacy/
+#          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
+#          poetry build
+#          poetry publish -r test-pypi $PYPI_TOKEN
+#
+#      - name: Commit version bump
+#        if: success()
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: |
+#          git config --local user.email "action@github.com"
+#          git config --local user.name "GitHub Action"
+#          git add pyproject.toml
+#          git commit -m "chore: bump version to ${{ env.new_version }}"
+#          git push
 
   open-pr-main:
     needs: [build-and-release-pypi]
