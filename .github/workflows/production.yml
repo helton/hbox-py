@@ -42,6 +42,7 @@ jobs:
           echo "::set-output name=version::$(poetry version -s)"
 
       - name: Upload release assets
+        if: success() && steps.semantic_release.outputs.released == 'true'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
