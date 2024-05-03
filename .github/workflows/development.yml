@@ -30,10 +30,10 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Python Semantic Release
-        uses: python-semantic-release/python-semantic-release@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Python Semantic Release
+#        uses: python-semantic-release/python-semantic-release@master
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
 
 #      - name: Bump version, build and publish to Test PyPI
 #        run: |
