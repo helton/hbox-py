@@ -34,7 +34,7 @@ jobs:
         id: semantic_release
         uses: python-semantic-release/python-semantic-release@v8.3.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
 
       - name: Get release version
         id: get_version
@@ -68,7 +68,7 @@ jobs:
       - name: Merge back to develop
         if: success()
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
         run: |
           git checkout develop
           git merge main
