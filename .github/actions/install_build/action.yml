@@ -1,4 +1,6 @@
-name: Build
+name: Install and Build
+
+description: Install and build Python app with Poetry
 
 runs:
   using: "composite"
@@ -8,6 +10,7 @@ runs:
 
     - name: Install Poetry
       run: pipx install poetry
+      shell: bash
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -17,6 +20,8 @@ runs:
 
     - name: Install dependencies
       run: poetry install
+      shell: bash
 
     - name: Build
       run: poetry build
+      shell: bash
