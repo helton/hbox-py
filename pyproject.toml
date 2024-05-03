@@ -29,7 +29,7 @@ version_toml = ["pyproject.toml:tool.poetry.version"]
 build_command = "poetry build"
 
 [tool.semantic_release.branches.main]
-match = "(develop)"
+match = "(main)"
 prerelease_token = "rc"
 prerelease = false
 

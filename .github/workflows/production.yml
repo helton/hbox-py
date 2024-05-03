@@ -11,9 +11,12 @@ jobs:
     environment: production
     permissions:
       contents: write
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Poetry
         run: pipx install poetry
@@ -27,53 +30,21 @@ jobs:
       - name: Install dependencies
         run: poetry install
 
-      - name: Build and publish to PyPI
+      - name: Python Semantic Release
+        id: semantic_release
+        uses: python-semantic-release/python-semantic-release@v8.3.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Test PyPI
+        if: success() && steps.semantic_release.outputs.released == 'true'
+        run: |
+          poetry config repositories.test-pypi https://test.pypi.org/legacy/
+          poetry config pypi-token.test-pypi ${{ secrets.PYPI_TOKEN }}
+          poetry publish -r test-pypi $PYPI_TOKEN
+
+      - name: Publish to PyPI
+        if: success() && steps.semantic_release.outputs.released == 'true'
         run: |
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
-          poetry build
           poetry publish
-
-  publish-release-github:
-    permissions:
-      contents: write
-    needs: [build-and-release-pypi]
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Poetry
-        run: pipx install poetry
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: 'poetry'
-
-      - name: Install dependencies
-        run: poetry install
-
-      - name: Build
-        run: poetry build
-
-      - name: Get version from pyproject.toml
-        id: get_version
-        run: |
-          echo "::set-output name=version::$(poetry version -s)"
-
-      - name: Set up environment variables for release
-        run: echo "RELEASE_VERSION=${{ steps.get_version.outputs.version }}" >> $GITHUB_ENV
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v${{ steps.get_version.outputs.version }}
-          files: |
-            ./dist/hbox-${{ steps.get_version.outputs.version }}.tar.gz
-            ./dist/hbox-${{ steps.get_version.outputs.version }}-py3-none-any.whl
-          body: |
-            ✨ Version v${{ steps.get_version.outputs.version }} released.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
