@@ -1,6 +1,6 @@
 name: Install and Build
 
-description: Install and build Python app with Poetry
+description: Install and build Python app using Poetry
 
 runs:
   using: "composite"
