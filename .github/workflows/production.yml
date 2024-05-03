@@ -13,6 +13,9 @@ jobs:
       contents: write
       id-token: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Build
         uses: ./.github/workflows/build.yml
         with:
@@ -49,6 +52,9 @@ jobs:
       contents: write
       id-token: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Build
         uses: ./.github/workflows/build.yml
         with:
@@ -70,6 +76,9 @@ jobs:
       contents: write
       id-token: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Build
         uses: ./.github/workflows/build.yml
         with:
