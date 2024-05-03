@@ -25,7 +25,7 @@ logging_use_named_masks = false
 major_on_zero = true
 allow_zero_version = true
 tag_format = "v{version}"
-version_toml = ["pyproject.toml:project.version"]
+version_toml = ["pyproject.toml:tool.poetry.version"]
 build_command = "poetry build"
 
 [tool.semantic_release.branches.main]
