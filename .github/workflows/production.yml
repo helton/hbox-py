@@ -36,10 +36,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get version from pyproject.toml
+      - name: Get release version
         id: get_version
-        run: |
-          echo "::set-output name=version::$(poetry version -s)"
+        if: success() && steps.semantic_release.outputs.released == 'true'
+        run: echo "version=$(poetry version -s)" >> $GITHUB_OUTPUT
 
       - name: Upload release assets
         if: success() && steps.semantic_release.outputs.released == 'true'
