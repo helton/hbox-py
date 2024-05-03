@@ -49,3 +49,12 @@ jobs:
         run: |
           poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
           poetry publish
+
+      - name: Merge back to develop
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git checkout develop
+          git merge main
+          git push
