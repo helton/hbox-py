@@ -26,7 +26,7 @@ major_on_zero = true
 allow_zero_version = true
 tag_format = "v{version}"
 version_toml = ["pyproject.toml:tool.poetry.version"]
-build_command = "poetry build && pwd && ls -alho"
+build_command = "poetry build && ls -alho dist"
 
 [tool.semantic_release.branches.main]
 match = "(main)"
