@@ -1,0 +1,27 @@
+name: Install and Build
+
+description: Install and build Python app with Poetry
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Poetry
+      run: pipx install poetry
+      shell: bash
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'poetry'
+
+    - name: Install dependencies
+      run: poetry install
+      shell: bash
+
+    - name: Build
+      run: poetry build
+      shell: bash
