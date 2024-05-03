@@ -7,10 +7,14 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/build.yml
-    with:
-      name: "Validate develop"
-      environment: development
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Build
+        uses: ./.github/actions/install_build
+        with:
+          name: "Validate develop"
+          environment: development
 
   open-pr-main:
     needs: [build]
