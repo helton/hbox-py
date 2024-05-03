@@ -2,6 +2,19 @@
 
 
 
+## v0.2.1 (2024-05-03)
+
+### Fix
+
+* fix: update test.pypi.org env var ([`542a247`](https://github.com/helton/hbox/commit/542a247a3369fbfe19b73687dd63197824089e96))
+
+### Unknown
+
+* Merge pull request #49 from helton/develop
+
+Pull request from develop to main ([`92dee2c`](https://github.com/helton/hbox/commit/92dee2ce4ccd2cdb680783213a0b81e5ac33919f))
+
+
 ## v0.2.0 (2024-05-03)
 
 ### Chore
