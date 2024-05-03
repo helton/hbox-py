@@ -35,7 +35,16 @@ jobs:
         uses: python-semantic-release/python-semantic-release@v8.3.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          root_options: -vv
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.semantic_release.outputs.version }}
+          files: |
+            ./dist/hbox-${{ steps.semantic_release.outputs.version }}.tar.gz
+            ./dist/hbox-${{ steps.semantic_release.outputs.version }}-py3-none-any.whl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Test PyPI
         if: success() && steps.semantic_release.outputs.released == 'true'
