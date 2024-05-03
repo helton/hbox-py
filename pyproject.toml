@@ -26,10 +26,7 @@ major_on_zero = true
 allow_zero_version = true
 tag_format = "v{version}"
 version_toml = ["pyproject.toml:project.version"]
-build_command = """
-    pipx install poetry
-    poetry build
-"""
+build_command = "poetry build"
 
 [tool.semantic_release.branches.main]
 match = "(develop)"
