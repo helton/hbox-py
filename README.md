@@ -198,7 +198,6 @@ These examples should provide a quick start guide for you to understand the basi
 - Add auto update
 - Add option to keep containers instead of using `--rm`
   - maybe adding custom tags to them to identify them easily?
-- Add GitHub Actions to build and publish to PyPI
 - Add unit and integration tests
   - it should run on Linux and Windows 
 - Double check if registered packages are available locally before using them
@@ -211,3 +210,7 @@ These examples should provide a quick start guide for you to understand the basi
 - Add `hbox register` to register a package, even with custom image
 - Add option to remove images when removing packages
 - Add support to colors in `hbox run` output when possible (*nix only?)
+- Add command to regenerate shims
+- Add `hbox verify` to check if there's something wrong with packages or with container engine:
+  - Verify if `docker` or `podman` are installed and available
+  - Verify if there are container images for the current version of each package
