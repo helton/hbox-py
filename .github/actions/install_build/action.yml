@@ -5,9 +5,6 @@ description: Install and build Python app using Poetry
 runs:
   using: "composite"
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
     - name: Install Poetry
       run: pipx install poetry
       shell: bash
