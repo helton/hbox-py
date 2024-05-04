@@ -99,6 +99,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
         run: |
+          git fetch origin develop:develop
           git checkout develop
           git merge main
           git push
