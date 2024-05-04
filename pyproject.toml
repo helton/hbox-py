@@ -39,6 +39,7 @@ changelog_file = "CHANGELOG.md"
 exclude_commit_patterns = [
     "^Merge pull request",
     "^Merge branch",
+    "^chore: bump version to v"
 ]
 
 [tool.semantic_release.changelog.environment]
