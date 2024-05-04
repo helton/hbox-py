@@ -186,31 +186,4 @@ v22.0.0
 
 These examples should provide a quick start guide for you to understand the basic operations that you can perform with hbox.
 
-## To do
-
-- Support `podman`
-- Support private registries and mirrors
-  - maybe via registry mapping in `config.json`?
-- Support local overrides for package versions
-  - use merged version to allow partial overrides?
-- Organize an index of packages outside this source repo
-  - maybe another repo `hbox-py-index`?
-- Add auto update
-- Add option to keep containers instead of using `--rm`
-  - maybe adding custom tags to them to identify them easily?
-- Add unit and integration tests
-  - it should run on Linux and Windows 
-- Double check if registered packages are available locally before using them
-- Add warn when a shim will conflict with an existing command
-- Add `hbox config` to support all `config.json` options
-- [Experimental] Identify paths in `hbox run` to map them via container volumes automatically
-- Separate `packages.json` from `config.json`
-  - Allow use to override `packages.json` retrieved from centralized index/repo
-- Add `hbox update` to update index
-- Add `hbox register` to register a package, even with custom image
-- Add option to remove images when removing packages
-- Add support to colors in `hbox run` output when possible (*nix only?)
-- Add command to regenerate shims
-- Add `hbox verify` to check if there's something wrong with packages or with container engine:
-  - Verify if `docker` or `podman` are installed and available
-  - Verify if there are container images for the current version of each package
+If you want to see my ideas for the future of the project, check out the [ROADMAP](ROADMAP.md).
